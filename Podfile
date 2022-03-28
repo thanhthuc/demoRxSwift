@@ -1,0 +1,32 @@
+
+inhibit_all_warnings!
+
+platform :ios, '11.0'
+use_frameworks!
+
+target 'Weather' do
+  
+  pod 'RxSwift', '6.2.0'
+  pod 'RxCocoa', '6.2.0'
+  pod 'RxDataSources'
+  use_modular_headers!
+  pod 'RealmSwift'
+
+  target 'WeatherTests' do
+    inherit! :search_paths
+    pod 'Cuckoo'
+  end
+end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    puts "#{target.name}"
+    if target.name == 'RxSwift'
+      target.build_configurations.each do |config|
+        if config.name == 'Debug'
+          config.build_settings['OTHER_SWIFT_FLAGS'] ||= ['-D', 'TRACE_RESOURCES']
+        end
+      end
+    end
+  end
+end
